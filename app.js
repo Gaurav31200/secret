@@ -39,6 +39,7 @@ mongoose.set("useCreateIndex", true);
 const userSchema = new mongoose.Schema({
     email: String,
     password: String,
+    facebookId: String,
     googleId: String,
     secret: String
 });
@@ -80,7 +81,7 @@ passport.use(new FacebookStrategy({
     callbackURL: "http://localhost:3000/auth/facebook/secrets"
 },
     function (accessToken, refreshToken, profile, cb) {
-        console.log(profile);
+        // console.log(profile);
         User.findOrCreate({ facebookId: profile.id }, function (err, user) {
             return cb(err, user);
         });
@@ -100,7 +101,7 @@ app.get('/auth/google/secrets',
         res.redirect("/secrets");
     });
 
-app.get("/auth/facebook", passport.authenticate('facebook', { scope: ["profile"] }));
+app.get("/auth/facebook", passport.authenticate('facebook', { scope: ["email"] }));
 
 app.get('/auth/facebook/secrets',
     passport.authenticate('facebook', { failureRedirect: "/login" }),
